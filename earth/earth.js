@@ -13,10 +13,10 @@ document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-const geometry = new THREE.IcosahedronGeometry(1, 1);
+const loader = new THREE.TextureLoader();
+const geometry = new THREE.IcosahedronGeometry(1, 16);
 const material = new THREE.MeshStandardMaterial({
-  color: 0xffff00,
-  flatShading: true,
+  map: loader.load("./textures/00_earthmap1k.jpg"),
 });
 
 const earthMesh = new THREE.Mesh(geometry, material);
