@@ -3,7 +3,7 @@ import { OrbitControls } from "jsm/controls/OrbitControls.js";
 import getStarfield from "./src/getStarfield.js";
 import { getFresnelMat } from "./src/getFresnelMat.js";
 
-window.THREE = THREE;
+// window.THREE = THREE;
 const w = window.innerWidth;
 const h = window.innerHeight;
 
@@ -13,8 +13,12 @@ camera.position.z = 5;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.03;
 
 const earthGroup = new THREE.Group();
 earthGroup.rotation.z = -23.4 * (Math.PI / 180);
@@ -38,12 +42,12 @@ earthGroup.add(lightsMesh);
 
 const cloudsMat = new THREE.MeshStandardMaterial({
   map: loader.load("./textures/04_earthcloudmap.jpg"),
-  // transparent: true,
-  // opacity: 0.8,
+  transparent: true,
+  opacity: 0.8,
   blending: THREE.AdditiveBlending,
 });
 const cloudsMesh = new THREE.Mesh(geometry, cloudsMat);
-cloudsMesh.scale.setScalar(1.01);
+cloudsMesh.scale.setScalar(1.005);
 earthGroup.add(cloudsMesh);
 
 const fresnelMat = getFresnelMat();
@@ -63,11 +67,11 @@ function animate() {
 
   earthMesh.rotation.y += 0.002;
   lightsMesh.rotation.y += 0.002;
-  cloudsMesh.rotation.y += 0.0025;
+  cloudsMesh.rotation.y += 0.0023;
   glowMesh.rotation.y += 0.002;
   stars.rotation.y -= 0.0002;
   renderer.render(scene, camera);
-  // controls.update();
+  controls.update();
 }
 
 animate();
