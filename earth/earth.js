@@ -26,10 +26,12 @@ scene.add(earthGroup);
 const detail = 16;
 const loader = new THREE.TextureLoader();
 const geometry = new THREE.IcosahedronGeometry(1, detail);
-const material = new THREE.MeshStandardMaterial({
+const material = new THREE.MeshPhongMaterial({
   map: loader.load("./textures/00_earthmap1k.jpg"),
+  specularMap: loader.load("./textures/02_earthspec1k.jpg"),
+  bumpMap: loader.load("./textures/01_earthbump1k.jpg"),
+  bumpScale: 0.04,
 });
-
 const earthMesh = new THREE.Mesh(geometry, material);
 earthGroup.add(earthMesh);
 
