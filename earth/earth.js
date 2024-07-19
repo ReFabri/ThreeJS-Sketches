@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "jsm/controls/OrbitControls.js";
 import getStarfield from "./src/getStarfield.js";
+import { getFresnelMat } from "./src/getFresnelMat.js";
+
 window.THREE = THREE;
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -27,15 +29,30 @@ const material = new THREE.MeshStandardMaterial({
 const earthMesh = new THREE.Mesh(geometry, material);
 earthGroup.add(earthMesh);
 
-const stars = getStarfield({ numStars: 1000 });
-scene.add(stars);
-
 const lightsMat = new THREE.MeshBasicMaterial({
   map: loader.load("./textures/03_earthlights1k.jpg"),
   blending: THREE.AdditiveBlending,
 });
 const lightsMesh = new THREE.Mesh(geometry, lightsMat);
 earthGroup.add(lightsMesh);
+
+const cloudsMat = new THREE.MeshStandardMaterial({
+  map: loader.load("./textures/04_earthcloudmap.jpg"),
+  // transparent: true,
+  // opacity: 0.8,
+  blending: THREE.AdditiveBlending,
+});
+const cloudsMesh = new THREE.Mesh(geometry, cloudsMat);
+cloudsMesh.scale.setScalar(1.01);
+earthGroup.add(cloudsMesh);
+
+const fresnelMat = getFresnelMat();
+const glowMesh = new THREE.Mesh(geometry, fresnelMat);
+glowMesh.scale.setScalar(1.01);
+earthGroup.add(glowMesh);
+
+const stars = getStarfield({ numStars: 1000 });
+scene.add(stars);
 
 const sunLight = new THREE.DirectionalLight(0xffffff, 2.0);
 sunLight.position.set(-2, 0.5, 1.5);
@@ -46,6 +63,8 @@ function animate() {
 
   earthMesh.rotation.y += 0.002;
   lightsMesh.rotation.y += 0.002;
+  cloudsMesh.rotation.y += 0.0025;
+  glowMesh.rotation.y += 0.002;
   stars.rotation.y -= 0.0002;
   renderer.render(scene, camera);
   // controls.update();
