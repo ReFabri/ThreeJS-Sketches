@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "jsm/controls/OrbitControls.js";
+import spline from "./spline.js";
 
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -20,17 +21,20 @@ controls.dampingFactor = 0.03;
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({ color: 0xffff00 });
 
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
 scene.add(hemiLight);
+
+//create a line geometry from the spline
+const lineGeometry = new THREE.BufferGeometry().setFromPoints(
+  spline.getPoints(100)
+);
+const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+const line = new THREE.Line(lineGeometry, lineMaterial);
+scene.add(line);
 
 function animate() {
   requestAnimationFrame(animate);
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.02;
   renderer.render(scene, camera);
   controls.update();
 }
