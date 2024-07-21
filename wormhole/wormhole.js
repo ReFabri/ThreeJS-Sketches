@@ -28,13 +28,34 @@ scene.add(hemiLight);
 const lineGeometry = new THREE.BufferGeometry().setFromPoints(
   spline.getPoints(100)
 );
-const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
-const line = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(line);
 
-function animate() {
+//create a tube geometry from the spline
+const tubeGeometry = new THREE.TubeGeometry(spline, 222, 0.65, 16, true);
+const tubeMaterial = new THREE.MeshStandardMaterial({
+  color: 0x0099ff,
+  side: THREE.DoubleSide,
+  wireframe: true,
+});
+const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+scene.add(tube);
+
+// const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+// const line = new THREE.Line(lineGeometry, lineMaterial);
+// scene.add(line);
+
+function updateCamera(t) {
+  const time = t * 0.05;
+  const looptime = 20 * 1000;
+  const p = (time % looptime) / looptime;
+  const pos = tube.geometry.parameters.path.getPointAt(p);
+  const lookAt = tube.geometry.parameters.path.getPointAt((p + 0.01) % 1);
+  camera.position.copy(pos);
+  camera.lookAt(lookAt);
+}
+
+function animate(t = 0) {
   requestAnimationFrame(animate);
-
+  updateCamera(t);
   renderer.render(scene, camera);
   controls.update();
 }
