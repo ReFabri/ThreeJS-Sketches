@@ -19,33 +19,30 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.03;
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshStandardMaterial({ color: 0xffff00 });
+const tubeGeometry = new THREE.TubeGeometry(spline, 222, 0.65, 16, true);
+// const tubeMaterial = new THREE.MeshBasicMaterial({
+//   color: 0x0099ff,
+//   side: THREE.DoubleSide,
+//   wireframe: true,
+// });
 
-const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
-scene.add(hemiLight);
+// const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+// scene.add(tube);
 
-//create a line geometry from the spline
 const lineGeometry = new THREE.BufferGeometry().setFromPoints(
   spline.getPoints(100)
 );
-
-//create a tube geometry from the spline
-const tubeGeometry = new THREE.TubeGeometry(spline, 222, 0.65, 16, true);
-const tubeMaterial = new THREE.MeshBasicMaterial({
-  color: 0x0099ff,
-  side: THREE.DoubleSide,
-  wireframe: true,
-});
-const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
-scene.add(tube);
+const edges = new THREE.EdgesGeometry(tubeGeometry, 0.1);
+const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0099ff });
+const tubeLines = new THREE.LineSegments(edges, lineMaterial);
+scene.add(tubeLines);
 
 function updateCamera(t) {
   const time = t * 0.1;
   const looptime = 10 * 1000;
   const p = (time % looptime) / looptime;
-  const pos = tube.geometry.parameters.path.getPointAt(p);
-  const lookAt = tube.geometry.parameters.path.getPointAt((p + 0.01) % 1);
+  const pos = tubeGeometry.parameters.path.getPointAt(p);
+  const lookAt = tubeGeometry.parameters.path.getPointAt((p + 0.01) % 1);
   camera.position.copy(pos);
   camera.lookAt(lookAt);
 }
