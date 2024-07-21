@@ -32,10 +32,34 @@ const tubeGeometry = new THREE.TubeGeometry(spline, 222, 0.65, 16, true);
 const lineGeometry = new THREE.BufferGeometry().setFromPoints(
   spline.getPoints(100)
 );
-const edges = new THREE.EdgesGeometry(tubeGeometry, 0.1);
+const edges = new THREE.EdgesGeometry(tubeGeometry, 0.2);
 const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0099ff });
 const tubeLines = new THREE.LineSegments(edges, lineMaterial);
 scene.add(tubeLines);
+
+const numBoxes = 55;
+
+const size = 0.075;
+const boxGeo = new THREE.BoxGeometry(size, size, size);
+for (let i = 0; i < numBoxes; i++) {
+  const boxMat = new THREE.MeshBasicMaterial({
+    color: 0xffff00,
+    wireframe: true,
+  });
+  const box = new THREE.Mesh(boxGeo, boxMat);
+  const p = (i / numBoxes + Math.random() * 0.1) % 1;
+  const pos = tubeGeometry.parameters.path.getPointAt(p);
+  pos.x += Math.random() * 0.2 - 0.1;
+  pos.z += Math.random() * 0.2 - 0.1;
+  box.position.copy(pos);
+  const rote = new THREE.Vector3(
+    Math.random() * Math.PI,
+    Math.random() * Math.PI,
+    Math.random() * Math.PI
+  );
+  box.rotation.setFromVector3(rote);
+  scene.add(box);
+}
 
 function updateCamera(t) {
   const time = t * 0.1;
