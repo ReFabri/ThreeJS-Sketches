@@ -40,25 +40,31 @@ scene.add(tubeLines);
 const numBoxes = 55;
 
 const size = 0.075;
-const boxGeo = new THREE.BoxGeometry(size, size, size);
+const boxGeometry = new THREE.BoxGeometry(size, size, size);
 for (let i = 0; i < numBoxes; i++) {
-  const boxMat = new THREE.MeshBasicMaterial({
-    color: 0xffff00,
-    wireframe: true,
-  });
-  const box = new THREE.Mesh(boxGeo, boxMat);
+  // const boxMat = new THREE.MeshBasicMaterial({
+  //   color: 0xffff00,
+  //   wireframe: true,
+  // });
+  // const box = new THREE.Mesh(boxGeometry, boxMat);
   const p = (i / numBoxes + Math.random() * 0.1) % 1;
   const pos = tubeGeometry.parameters.path.getPointAt(p);
   pos.x += Math.random() * 0.2 - 0.1;
   pos.z += Math.random() * 0.2 - 0.1;
-  box.position.copy(pos);
+  // box.position.copy(pos);
   const rote = new THREE.Vector3(
     Math.random() * Math.PI,
     Math.random() * Math.PI,
     Math.random() * Math.PI
   );
-  box.rotation.setFromVector3(rote);
-  scene.add(box);
+  // box.rotation.setFromVector3(rote);
+  const edges = new THREE.EdgesGeometry(boxGeometry, 0.2);
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffff00 });
+  const boxLines = new THREE.LineSegments(edges, lineMaterial);
+  boxLines.position.copy(pos);
+  boxLines.rotation.setFromVector3(rote);
+  // scene.add(box);
+  scene.add(boxLines);
 }
 
 function updateCamera(t) {
