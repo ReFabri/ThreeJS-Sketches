@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "jsm/controls/OrbitControls.js";
 import spline from "./spline.js";
+import { EffectComposer } from "jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "jsm/postprocessing/UnrealBloomPass.js";
 
 const w = window.innerWidth;
 const h = window.innerHeight;
@@ -18,6 +21,15 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.03;
+
+const renderScene = new RenderPass(scene, camera);
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 1.5, 0.4, 100);
+bloomPass.threshold = 0.002;
+bloomPass.strength = 3.5;
+bloomPass.radius = 0;
+const composer = new EffectComposer(renderer);
+composer.addPass(renderScene);
+composer.addPass(bloomPass);
 
 const tubeGeometry = new THREE.TubeGeometry(spline, 222, 0.65, 16, true);
 // const tubeMaterial = new THREE.MeshBasicMaterial({
@@ -59,7 +71,8 @@ for (let i = 0; i < numBoxes; i++) {
   );
   // box.rotation.setFromVector3(rote);
   const edges = new THREE.EdgesGeometry(boxGeometry, 0.2);
-  const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffff00 });
+  const color = new THREE.Color().setHSL(p, 1, 0.5);
+  const lineMaterial = new THREE.LineBasicMaterial({ color });
   const boxLines = new THREE.LineSegments(edges, lineMaterial);
   boxLines.position.copy(pos);
   boxLines.rotation.setFromVector3(rote);
@@ -80,7 +93,7 @@ function updateCamera(t) {
 function animate(t = 0) {
   requestAnimationFrame(animate);
   updateCamera(t);
-  renderer.render(scene, camera);
+  composer.render(scene, camera);
   controls.update();
 }
 
