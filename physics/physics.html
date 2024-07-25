@@ -8,6 +8,13 @@
       body {
         margin: 0;
       }
+      .title {
+        font-family: Arial, Helvetica, sans-serif;
+        top: 10%;
+        left: 10%;
+        position: absolute;
+        color: white;
+      }
     </style>
     <script type="importmap">
       {
@@ -17,8 +24,12 @@
         }
       }
     </script>
+    <script defer type="module" src="physics.js"></script>
   </head>
   <body>
-    <script type="module" src="physics.js"></script>
+    <div class="title">
+      <h2>Three.js physics with Rapier</h2>
+      <a href="/">Back</a>
+    </div>
   </body>
 </html>
